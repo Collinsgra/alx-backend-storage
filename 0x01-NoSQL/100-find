@@ -1,5 +1,9 @@
-// Connect to the MongoDB server and use the specified database
-db = db.getSiblingDB(db.getMongo().getDBNames()[0]);
+#!/bin/bash
+#Regex filter
 
-// Find all documents in the school collection where the name starts with "Holberton"
-db.school.find({ name: { $regex: /^Holberton/ } }).forEach(printjson);
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <database_name>"
+    exit 1
+fi
+
+mongo $1 --eval 'db.school.find({ "name": /^Holberton/i }).forEach(printjson)'
