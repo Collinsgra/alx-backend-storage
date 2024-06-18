@@ -6,6 +6,8 @@
     :return: List of school documents having the specific topic
 """
 
+import pymongo
+
 def schools_by_topic(mongo_collection, topic):
     """
     Return the list of schools having a specific topic.
