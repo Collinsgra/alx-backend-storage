@@ -2,7 +2,7 @@
 #Regex filter
 
 if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <database_name>"
+    echo "Usage: $0 <my_db>"
     exit 1
 fi
 
