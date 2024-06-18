@@ -1,7 +1,2 @@
-// Connect to MongoDB and list all databases
-print("Connecting to MongoDB...");
-var dbs = db.adminCommand('listDatabases').databases;
-dbs.forEach(function(database) {
-    print(database.name + "\t" + (database.sizeOnDisk / 1024 / 1024 / 1024).toFixed(3) + "GB");
-});
-print("bye");
+// a script that lists all databases
+show dbs
