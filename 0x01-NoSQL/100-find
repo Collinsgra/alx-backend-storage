@@ -1,8 +1,5 @@
-// Retrieve the database name from the command line arguments
-var dbName = db.getMongo().getDBNames()[0];
-
-// Connect to the specified database
-var db = connect('localhost:27017/' + dbName);
+// Connect to the MongoDB server and use the specified database
+db = db.getSiblingDB(db.getMongo().getDBNames()[0]);
 
 // Find all documents in the school collection where the name starts with "Holberton"
 db.school.find({ name: { $regex: /^Holberton/ } }).forEach(printjson);
