@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Storing lists
+Retrieving lists
 """
 
 import redis
@@ -29,6 +29,18 @@ def call_history(method: Callable) -> Callable:
         self._redis.rpush(output_key, str(result))
         return result
     return wrapper
+
+def replay(method: Callable) -> None:
+    input_key = f"{method.__qualname__}:inputs"
+    output_key = f"{method.__qualname__}:outputs"
+    cache_instance = method.__self__
+
+    inputs = cache_instance._redis.lrange(input_key, 0, -1)
+    outputs = cache_instance._redis.lrange(output_key, 0, -1)
+
+    print(f"{method.__qualname__} was called {len(inputs)} times:")
+    for input_args, output in zip(inputs, outputs):
+        print(f"{method.__qualname__}(*{input_args.decode('utf-8')}) -> {output.decode('utf-8')}")
 
 class Cache:
     def __init__(self):
