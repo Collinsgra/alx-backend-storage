@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Incrementing values
+Storing lists
 """
 
 import redis
@@ -11,11 +11,23 @@ from functools import wraps
 def count_calls(method: Callable) -> Callable:
     @wraps(method)
     def wrapper(self, *args, **kwargs):
-        # Increment the count for this method
         key = method.__qualname__
         self._redis.incr(key)
-        # Call the original method
         return method(self, *args, **kwargs)
+    return wrapper
+
+def call_history(method: Callable) -> Callable:
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        input_key = f"{method.__qualname__}:inputs"
+        output_key = f"{method.__qualname__}:outputs"
+        # Store the input arguments in Redis
+        self._redis.rpush(input_key, str(args))
+        # Call the original method and get the result
+        result = method(self, *args, **kwargs)
+        # Store the result in Redis
+        self._redis.rpush(output_key, str(result))
+        return result
     return wrapper
 
 class Cache:
@@ -24,6 +36,7 @@ class Cache:
         self._redis.flushdb()
 
     @count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         key = str(uuid.uuid4())
         self._redis.set(key, data)
